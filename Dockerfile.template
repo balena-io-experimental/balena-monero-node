@@ -17,6 +17,7 @@ RUN apt-get update && \
       pkg-config \
       libevent-dev \
       libunbound-dev \
+      libminiupnpc-dev \
       libssl-dev \
       python-dev && \
     wget https://sourceforge.net/projects/boost/files/boost/1.62.0/boost_1_62_0.tar.bz2 && \
@@ -26,10 +27,14 @@ RUN apt-get update && \
     ./b2 -j 36 && \
     ./bjam install && \
     cd .. && \
+    rm -rf boost_* && \
     git clone https://github.com/monero-project/monero.git && \
     cd monero && \
     git checkout -b build ${MONEROVERSION} && \
     make -j 36 release-static-armv7 && \
+    cp ./build/release/bin/monero* /usr/bin/ && \
+    cd .. && \
+    rm -rf monero \
     apt-get purge \
       git \
       wget \
@@ -38,11 +43,12 @@ RUN apt-get update && \
       pkg-config \
       libevent-dev \
       libunbound-dev \
+      libminiupnpc-dev \
       libssl-dev \
       python-dev && \
     apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY monero.conf /etc/
 
-# CMD ./monero/build/release/bin/monerod --config-file /etc/monero.conf
-CMD while : ; do echo "Idling..."; sleep 600; done
+# Start monero node
+CMD monerod --config-file /etc/monero.conf
