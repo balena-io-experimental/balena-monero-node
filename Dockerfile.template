@@ -51,4 +51,4 @@ RUN apt-get update && \
 COPY monero.conf /etc/
 
 # Start monero node
-CMD ["monerod","--config-file /etc/monero.conf"]
+CMD ["monerod", "--config-file", "/etc/monero.conf"]
