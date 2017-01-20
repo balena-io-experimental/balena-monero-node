@@ -3,4 +3,22 @@
 # Starting the monero node
 monerod --config-file /etc/monero.conf --detach
 
-while : ; do ls -lah /data/monero/lmdb/data.mdb; ps uax | grep "monero"; sleep 600; done
+sleep 1
+
+MONERO_DATA=/data/monero/lmdb/data.mdb
+while : ;
+do
+  if [ -f ${MONERO_DATA} ];
+  then
+    echo "Listing monero database: "
+    ls -lah ${MONERO_DATA}
+  else
+    echo "Monero database does not exists (yet)?"
+  fi
+
+  echo "Listing `monerod` process"
+  ps -C monerod
+
+  echo "Sleeping for 10 mins"
+  sleep 600
+done
